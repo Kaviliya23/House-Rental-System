@@ -1,3 +1,4 @@
+//userSlice.js
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState ={
@@ -6,7 +7,7 @@ const initialState ={
     loading:false,
 };
 
-const counterSlice = createSlice({
+const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
@@ -20,7 +21,7 @@ const counterSlice = createSlice({
         state.error=null;
     },
 
-    signInFailure:(state)=>{
+    signInFailure:(state,action)=>{
         state.loading=false;
         state.error=action.payload;
     },
@@ -28,6 +29,6 @@ const counterSlice = createSlice({
   },
 });
 
-export const { signInStart,signInSuccess,signInFailure } = userSlice.action
+export const { signInStart,signInSuccess,signInFailure } = userSlice.actions;
 
-export default counterSlice.reducer
+export default userSlice.reducer;
