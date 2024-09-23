@@ -1,7 +1,9 @@
+//sign in page
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; 
 import { useDispatch, useSelector } from 'react-redux';
 import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import OAuth from '../components/OAuth.jsx';
 
 export const SignIn = () => {
   const dispatch = useDispatch();
@@ -62,9 +64,10 @@ export const SignIn = () => {
           onChange={handleChange}
         />
 
-        <button className='bg-slate-600 text-white p-3 uppercase hover:opacity-80'>
+        <button className='bg-slate-600 text-white p-3 uppercase rounded-lg hover:opacity-80'>
           {loading ? 'Loading...' : 'Sign In'}
         </button>
+        <OAuth/>
       </form>
 
       <div className='flex gap-2 mt-5'>

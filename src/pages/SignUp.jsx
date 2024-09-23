@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; 
-import {set} from 'mongoose';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import OAuth from '../components/OAuth.jsx';
 
 export const SignUp = () => {
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
-    console.log(formData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    dispatch(signInStart());
 
     try {
       const res = await fetch("/api/auth/signup", {
@@ -28,19 +28,17 @@ export const SignUp = () => {
       });
 
       const data = await res.json();
-      console.log("Response:", data);
 
-      if (res.ok) {
-        alert('Sign up successful!');
-        navigate('/sign-in'); // Navigate after a successful signup
-      } else {
-        setError(data.message || 'Sign up failed!');
+      if (data.success === false) {
+        dispatch(signInFailure(data.message));
+        return;
       }
+
+      dispatch(signInSuccess(data.user));
+      navigate("/");
+
     } catch (error) {
-      setError('Error during signup: ' + error.message);
-      console.error('Error during signup:', error);
-    } finally {
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -56,7 +54,6 @@ export const SignUp = () => {
           id='username'
           onChange={handleChange}
         />
-
         <input
           type='email'
           placeholder='Email'
@@ -64,7 +61,6 @@ export const SignUp = () => {
           id='email'
           onChange={handleChange}
         />
-
         <input
           type='password'
           placeholder='Password'
@@ -72,15 +68,15 @@ export const SignUp = () => {
           id='password'
           onChange={handleChange}
         />
-
-        <button className='bg-slate-600 text-white p-3 uppercase hover:opacity-80'>
+        <button className='bg-slate-600 text-white p-3 uppercase rounded-lg hover:opacity-80'>
           {loading ? 'Loading...' : 'Sign Up'}
         </button>
+        <OAuth isSignUp={true} />
       </form>
 
       <div className='flex gap-2 mt-5'>
-        <p>Have an account?</p>
-        <Link to={'/sign-in'}> {/* Use the correct Link component */}
+        <p>Already have an account?</p>
+        <Link to={'/sign-in'}>
           <span className='text-blue-500'>Sign In</span>
         </Link>
       </div>
